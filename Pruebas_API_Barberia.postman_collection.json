@@ -1,0 +1,677 @@
+{
+	"info": {
+		"_postman_id": "barberia-vintage-api",
+		"name": "🏪 API Barbería Vintage - Pruebas CRUD",
+		"description": "Colección de pruebas para la API REST de la Barbería Vintage. Incluye todas las operaciones CRUD para gestión de productos/servicios.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "barberia-vintage"
+	},
+	"item": [
+		{
+			"name": "📋 Gestión de Productos",
+			"item": [
+				{
+					"name": "📖 Listar Todos los Productos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Products have required fields\", function () {",
+									"    const products = pm.response.json();",
+									"    if (products.length > 0) {",
+									"        pm.expect(products[0]).to.have.property('id');",
+									"        pm.expect(products[0]).to.have.property('nombre');",
+									"        pm.expect(products[0]).to.have.property('precio');",
+									"        pm.expect(products[0]).to.have.property('categoria');",
+									"    }",
+									"});",
+									"",
+									"// Guardar ID del primer producto para usar en otras pruebas",
+									"const products = pm.response.json();",
+									"if (products.length > 0) {",
+									"    pm.environment.set(\"productId\", products[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/productos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos"
+							]
+						},
+						"description": "Obtiene la lista completa de todos los productos/servicios disponibles en la barbería."
+					},
+					"response": []
+				},
+				{
+					"name": "🔍 Consultar Producto por ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Product has all required fields\", function () {",
+									"    const product = pm.response.json();",
+									"    pm.expect(product).to.have.property('id');",
+									"    pm.expect(product).to.have.property('nombre');",
+									"    pm.expect(product).to.have.property('descripcion');",
+									"    pm.expect(product).to.have.property('precio');",
+									"    pm.expect(product).to.have.property('categoria');",
+									"    pm.expect(product).to.have.property('imagen');",
+									"});",
+									"",
+									"pm.test(\"Price is a number and greater than 0\", function () {",
+									"    const product = pm.response.json();",
+									"    pm.expect(product.precio).to.be.a('number');",
+									"    pm.expect(product.precio).to.be.above(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/productos/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos",
+								"{{productId}}"
+							]
+						},
+						"description": "Consulta un producto específico por su ID único."
+					},
+					"response": []
+				},
+				{
+					"name": "➕ Crear Nuevo Producto",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 or 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									"",
+									"pm.test(\"Product created successfully\", function () {",
+									"    const product = pm.response.json();",
+									"    pm.expect(product).to.have.property('id');",
+									"    pm.expect(product.nombre).to.eql('Corte Vintage Clásico');",
+									"    pm.expect(product.categoria).to.eql('Cortes');",
+									"});",
+									"",
+									"// Guardar ID del producto creado para las pruebas de actualización y eliminación",
+									"const newProduct = pm.response.json();",
+									"if (newProduct.id) {",
+									"    pm.environment.set(\"newProductId\", newProduct.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Corte Vintage Clásico\",\n  \"descripcion\": \"Corte de cabello clásico con estilo vintage, incluye lavado y peinado elegante\",\n  \"precio\": 35000,\n  \"categoria\": \"Cortes\",\n  \"imagen\": \"corte_quiff.png\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/productos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos"
+							]
+						},
+						"description": "Crea un nuevo producto/servicio en el sistema de la barbería."
+					},
+					"response": []
+				},
+				{
+					"name": "✏️ Actualizar Producto Existente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Product updated successfully\", function () {",
+									"    const product = pm.response.json();",
+									"    pm.expect(product.nombre).to.eql('Corte Vintage Premium ACTUALIZADO');",
+									"    pm.expect(product.precio).to.eql(45000);",
+									"    pm.expect(product.descripcion).to.include('ACTUALIZADO');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{newProductId}},\n  \"nombre\": \"Corte Vintage Premium ACTUALIZADO\",\n  \"descripcion\": \"Corte de cabello premium con estilo vintage ACTUALIZADO, incluye lavado, tratamiento capilar y peinado profesional\",\n  \"precio\": 45000,\n  \"categoria\": \"Cortes\",\n  \"imagen\": \"corte_slicked_back.png\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/productos/{{newProductId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos",
+								"{{newProductId}}"
+							]
+						},
+						"description": "Actualiza la información de un producto existente por su ID."
+					},
+					"response": []
+				},
+				{
+					"name": "🗑️ Eliminar Producto",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 204\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+									"});",
+									"",
+									"pm.test(\"Product deleted successfully\", function () {",
+									"    // Verificar que la respuesta sea exitosa",
+									"    pm.expect(pm.response.code).to.be.below(300);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/productos/{{newProductId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos",
+								"{{newProductId}}"
+							]
+						},
+						"description": "Elimina un producto del sistema por su ID."
+					},
+					"response": []
+				}
+			],
+			"description": "Operaciones CRUD completas para la gestión de productos/servicios de la barbería."
+		},
+		{
+			"name": "📂 Gestión de Categorías",
+			"item": [
+				{
+					"name": "📋 Listar Todas las Categorías",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Categories include expected values\", function () {",
+									"    const categories = pm.response.json();",
+									"    pm.expect(categories).to.include('Cortes');",
+									"    pm.expect(categories).to.include('Bigote y Barba');",
+									"    pm.expect(categories).to.include('Tratamientos');",
+									"});",
+									"",
+									"// Guardar primera categoría para usar en filtrado",
+									"const categories = pm.response.json();",
+									"if (categories.length > 0) {",
+									"    pm.environment.set(\"testCategory\", categories[0]);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/categorias",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"categorias"
+							]
+						},
+						"description": "Obtiene la lista de todas las categorías disponibles en el sistema."
+					},
+					"response": []
+				},
+				{
+					"name": "🔍 Filtrar Productos por Categoría",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"All products belong to the filtered category\", function () {",
+									"    const products = pm.response.json();",
+									"    const testCategory = pm.environment.get(\"testCategory\");",
+									"    ",
+									"    products.forEach(function(product) {",
+									"        pm.expect(product.categoria).to.eql(testCategory);",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/productos/categoria/{{testCategory}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos",
+								"categoria",
+								"{{testCategory}}"
+							]
+						},
+						"description": "Filtra y obtiene productos que pertenecen a una categoría específica."
+					},
+					"response": []
+				}
+			],
+			"description": "Operaciones relacionadas con la gestión y filtrado por categorías."
+		},
+		{
+			"name": "🧪 Casos de Prueba Especiales",
+			"item": [
+				{
+					"name": "❌ Producto No Encontrado (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/productos/99999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos",
+								"99999"
+							]
+						},
+						"description": "Prueba el manejo de errores cuando se busca un producto que no existe."
+					},
+					"response": []
+				},
+				{
+					"name": "❌ Crear Producto con Datos Inválidos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 or 422\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 422]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"\",\n  \"descripcion\": \"\",\n  \"precio\": -100,\n  \"categoria\": \"\",\n  \"imagen\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/productos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos"
+							]
+						},
+						"description": "Prueba el manejo de validaciones cuando se intenta crear un producto con datos inválidos."
+					},
+					"response": []
+				},
+				{
+					"name": "🔍 Categoría No Existente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (empty array) or 404\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    pm.test(\"Response is an empty array\", function () {",
+									"        pm.expect(pm.response.json()).to.be.an('array').that.is.empty;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/productos/categoria/CategoriaInexistente",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos",
+								"categoria",
+								"CategoriaInexistente"
+							]
+						},
+						"description": "Prueba el comportamiento cuando se busca por una categoría que no existe."
+					},
+					"response": []
+				}
+			],
+			"description": "Casos de prueba para validar el manejo de errores y situaciones especiales."
+		},
+		{
+			"name": "🎭 Ejemplos con Datos Reales",
+			"item": [
+				{
+					"name": "➕ Crear Corte Afro",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Corte Afro Profesional\",\n  \"descripcion\": \"Corte de cabello afro con técnicas especializadas, incluye lavado con productos naturales y peinado\",\n  \"precio\": 38000,\n  \"categoria\": \"Cortes\",\n  \"imagen\": \"corte_afro.png\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/productos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "➕ Crear Tratamiento Capilar",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Tratamiento Hidratante Premium\",\n  \"descripcion\": \"Tratamiento capilar profundo con aceites naturales, mascarilla nutritiva y masaje relajante del cuero cabelludo\",\n  \"precio\": 65000,\n  \"categoria\": \"Tratamientos\",\n  \"imagen\": \"tratamiento_capilar.png\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/productos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "➕ Crear Combo Barbería Completa",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Combo Barbería Vintage Completa\",\n  \"descripcion\": \"Experiencia completa: corte de cabello, arreglo de barba, tratamiento capilar, lavado y peinado final. Incluye consulta de estilo personalizada\",\n  \"precio\": 85000,\n  \"categoria\": \"Combos\",\n  \"imagen\": \"combo_cresta_leñador.png\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/productos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Ejemplos de creación de productos con datos realistas para la barbería."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script que se ejecuta antes de cada request",
+					"console.log(\"🚀 Ejecutando request a: \" + pm.request.url);",
+					"",
+					"// Verificar que baseUrl esté configurada",
+					"if (!pm.environment.get(\"baseUrl\")) {",
+					"    pm.environment.set(\"baseUrl\", \"http://localhost:5000\");",
+					"    console.log(\"⚙️  BaseUrl configurada automáticamente a: http://localhost:5000\");",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script que se ejecuta después de cada request",
+					"console.log(\"✅ Request completado con status: \" + pm.response.code);",
+					"",
+					"// Log de tiempo de respuesta",
+					"pm.test(\"Response time is reasonable\", function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(3000);",
+					"});",
+					"",
+					"// Log del tipo de contenido para requests exitosos",
+					"if (pm.response.code < 400) {",
+					"    pm.test(\"Content-Type is JSON for successful requests\", function () {",
+					"        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+					"    });",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"description": "URL base del API de la Barbería Vintage"
+		},
+		{
+			"key": "productId",
+			"value": "1",
+			"description": "ID de producto para pruebas (se actualiza automáticamente)"
+		},
+		{
+			"key": "newProductId",
+			"value": "",
+			"description": "ID del nuevo producto creado para pruebas de actualización y eliminación"
+		},
+		{
+			"key": "testCategory",
+			"value": "Cortes",
+			"description": "Categoría para pruebas de filtrado"
+		}
+	]
+}
