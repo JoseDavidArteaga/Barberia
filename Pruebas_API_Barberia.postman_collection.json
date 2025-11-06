@@ -1,17 +1,17 @@
 {
 	"info": {
 		"_postman_id": "barberia-vintage-api",
-		"name": "🏪 API Barbería Vintage - Pruebas CRUD",
+		"name": "API Barbería Vintage - Pruebas CRUD",
 		"description": "Colección de pruebas para la API REST de la Barbería Vintage. Incluye todas las operaciones CRUD para gestión de productos/servicios.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "barberia-vintage"
 	},
 	"item": [
 		{
-			"name": "📋 Gestión de Productos",
+			"name": "Gestión de Productos",
 			"item": [
 				{
-					"name": "📖 Listar Todos los Productos",
+					"name": "Listar Todos los Productos",
 					"event": [
 						{
 							"listen": "test",
@@ -68,7 +68,7 @@
 					"response": []
 				},
 				{
-					"name": "🔍 Consultar Producto por ID",
+					"name": "Consultar Producto por ID",
 					"event": [
 						{
 							"listen": "test",
@@ -122,7 +122,7 @@
 					"response": []
 				},
 				{
-					"name": "➕ Crear Nuevo Producto",
+					"name": "Crear Nuevo Producto",
 					"event": [
 						{
 							"listen": "test",
@@ -180,7 +180,7 @@
 					"response": []
 				},
 				{
-					"name": "✏️ Actualizar Producto Existente",
+					"name": "Actualizar Producto Existente",
 					"event": [
 						{
 							"listen": "test",
@@ -233,7 +233,7 @@
 					"response": []
 				},
 				{
-					"name": "🗑️ Eliminar Producto",
+					"name": "Eliminar Producto",
 					"event": [
 						{
 							"listen": "test",
@@ -279,10 +279,10 @@
 			"description": "Operaciones CRUD completas para la gestión de productos/servicios de la barbería."
 		},
 		{
-			"name": "📂 Gestión de Categorías",
+			"name": "Gestión de Categorías",
 			"item": [
 				{
-					"name": "📋 Listar Todas las Categorías",
+					"name": "Listar Todas las Categorías",
 					"event": [
 						{
 							"listen": "test",
@@ -336,7 +336,7 @@
 					"response": []
 				},
 				{
-					"name": "🔍 Filtrar Productos por Categoría",
+					"name": "Filtrar Productos por Categoría",
 					"event": [
 						{
 							"listen": "test",
@@ -391,144 +391,10 @@
 			"description": "Operaciones relacionadas con la gestión y filtrado por categorías."
 		},
 		{
-			"name": "🧪 Casos de Prueba Especiales",
+			"name": "Ejemplos con Datos Reales",
 			"item": [
 				{
-					"name": "❌ Producto No Encontrado (404)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 404\", function () {",
-									"    pm.response.to.have.status(404);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/productos/99999",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"productos",
-								"99999"
-							]
-						},
-						"description": "Prueba el manejo de errores cuando se busca un producto que no existe."
-					},
-					"response": []
-				},
-				{
-					"name": "❌ Crear Producto con Datos Inválidos",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 400 or 422\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([400, 422]);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"nombre\": \"\",\n  \"descripcion\": \"\",\n  \"precio\": -100,\n  \"categoria\": \"\",\n  \"imagen\": \"\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/productos",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"productos"
-							]
-						},
-						"description": "Prueba el manejo de validaciones cuando se intenta crear un producto con datos inválidos."
-					},
-					"response": []
-				},
-				{
-					"name": "🔍 Categoría No Existente",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200 (empty array) or 404\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
-									"});",
-									"",
-									"if (pm.response.code === 200) {",
-									"    pm.test(\"Response is an empty array\", function () {",
-									"        pm.expect(pm.response.json()).to.be.an('array').that.is.empty;",
-									"    });",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/productos/categoria/CategoriaInexistente",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"productos",
-								"categoria",
-								"CategoriaInexistente"
-							]
-						},
-						"description": "Prueba el comportamiento cuando se busca por una categoría que no existe."
-					},
-					"response": []
-				}
-			],
-			"description": "Casos de prueba para validar el manejo de errores y situaciones especiales."
-		},
-		{
-			"name": "🎭 Ejemplos con Datos Reales",
-			"item": [
-				{
-					"name": "➕ Crear Corte Afro",
+					"name": "Crear Corte Afro",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -555,7 +421,7 @@
 					"response": []
 				},
 				{
-					"name": "➕ Crear Tratamiento Capilar",
+					"name": "Crear Tratamiento Capilar",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -582,7 +448,7 @@
 					"response": []
 				},
 				{
-					"name": "➕ Crear Combo Barbería Completa",
+					"name": "Crear Combo Barbería Completa",
 					"request": {
 						"method": "POST",
 						"header": [
