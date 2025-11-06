@@ -277,13 +277,6 @@ Se incluye una colección de Postman para probar todos los endpoints:
 - 🎯 Base de datos con datos de prueba
 - 🎯 Validaciones y manejo de errores
 
-### **🔄 En Desarrollo/Futuras Mejoras**
-- 📊 Páginas de ofertas y cupones (funcionalidad completa)
-- 🔐 Sistema de autenticación
-- 📈 Dashboard administrativo
-- 💳 Sistema de pagos
-- 📱 App móvil nativa
-
 ---
 
 ## 🏆 **TECNOLOGÍAS Y HERRAMIENTAS**
